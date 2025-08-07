@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>grace's little library</title>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend+Deca&display=swap" rel="stylesheet" />
+    <style>
+      body {
+        margin: 0;
+        font-family: "Lexend Deca", sans-serif;
+        background-color: #46315c;
+        color: #10091d;
+        text-transform: lowercase;
+      }
+
+      header img {
+        display: block;
+        margin: 10px auto 20px;
+        max-width: 90%;
+        height: auto;
+      }
+
+      .container {
+        background-color: #fbf8ef;
+        max-width: 90%;
+        width: 1000px;
+        margin: 20px auto;
+        padding: 30px;
+        border-radius: 10px;
+        display: flex;
+        gap: 30px;
+        align-items: center;
+      }
+
+      .container img {
+        width: 180px;
+        border-radius: 10px;
+      }
+
+      .chatbox-container {
+        background-color: #b3a3ba;
+        padding: 30px;
+        border-radius: 10px;
+        max-width: 90%;
+        width: 1000px;
+        margin: 20px auto;
+      }
+
+      .chatbox-title {
+        font-size: 1.2em;
+        font-weight: bold;
+        color: #10091d;
+        margin-bottom: 10px;
+      }
+
+      .chat-log {
+        background-color: #fbf8ef;
+        padding: 15px;
+        border-radius: 10px;
+        min-height: 200px;
+        max-height: 400px;
+        overflow-y: auto;
+        margin-bottom: 20px;
+      }
+
+      .message {
+        background-color: #fbf8ef;
+        padding: 12px 16px;
+        margin: 8px;
+        border-radius: 18px;
+        max-width: 75%;
+        display: inline-block;
+        word-wrap: break-word;
+      }
+
+      .user {
+        text-align: right;
+      }
+
+      .user .message {
+        float: right;
+        color: #46315c;
+        background-color: #d5c6dd;
+      }
+
+      .bot {
+        text-align: left;
+      }
+
+      .bot .message {
+        float: left;
+      }
+
+      .input-container {
+        display: flex;
+        gap: 10px;
+      }
+
+      input[type="text"] {
+        flex-grow: 1;
+        padding: 16px 14px;
+        border: none;
+        border-radius: 6px;
+        font-family: inherit;
+        font-size: 1em;
+      }
+
+      button {
+        background-color: #d5c6dd;
+        color: #10091d;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-family: inherit;
+        font-size: 1em;
+        transition: background-color 0.3s;
+      }
+
+      button.active {
+        background-color: #46315c;
+        color: #fbf8ef;
+      }
+
+      footer {
+        text-align: center;
+        color: #fbf8ef;
+        font-size: 0.9em;
+        margin: 40px 0;
+      }
+
+      footer img {
+        height: 20px;
+        vertical-align: middle;
+        margin-left: 6px;
+      }
+
+      .loading {
+        font-style: italic;
+        color: #10091d;
+        margin: 10px 0;
+      }
+
+      .dots::after {
+        content: "";
+        display: inline-block;
+        width: 1ch;
+        animation: dots 1s steps(3, end) infinite;
+      }
+
+      @keyframes dots {
+        0% { content: ""; }
+        33% { content: "."; }
+        66% { content: ".."; }
+        100% { content: "..."; }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <img
+        src="https://graceslittlelibrary.sfo2.cdn.digitaloceanspaces.com/grace's%20little%20library%20header.png"
+        alt="grace's little library header"
+      />
+    </header>
+
+    <section class="container">
+      <img
+        src="https://graceslittlelibrary.sfo2.cdn.digitaloceanspaces.com/fang%20header%20image%202.png"
+        alt="grace reading and her dog fang"
+      />
+      <div>
+        <p>
+          ✨ welcome! my name is grace and i love to read. i also work in tech and
+          am learning how to build my own website. this is my first attempt at a
+          webpage, and i'd love for you to try out the little librarian chatbot
+          i made!
+        </p>
+        <p>
+          when i'm not stressing myself out learning how to code, i love
+          reading (favorite genre: romantic fantasy—typical, i know).
+        </p>
+        <p>
+          if you're in search of your next great read, i'd love for you to try
+          out the little librarian below! 🔮
+        </p>
+      </div>
+    </section>
+
+    <section class="chatbox-container">
+      <div class="chatbox-title">✨little librarian chatbot</div>
+      <div class="chat-log" id="chat-log">
+        <div class="bot">
+          <div class="message">
+            hi, i’m your little librarian friend tucked in a cozy corner of the
+            internet—tell me about a book you loved or a genre you adore, and
+            i’ll fetch you something else magical to read. ☕️📚✨
+          </div>
+        </div>
+      </div>
+      <div class="loading" id="loading" style="display: none">
+        let me pull some books from the shelves<span class="dots"></span>
+      </div>
+      <div class="input-container">
+        <input
+          type="text"
+          id="user-input"
+          placeholder="type your message..."
+          autocomplete="off"
+          autocorrect="off"
+          autocapitalize="off"
+          spellcheck="false"
+        />
+        <button id="send-btn">send</button>
+      </div>
+    </section>
+
+    <footer>
+      made with 💙 for fellow book lovers using digitalocean
+      
+    </footer>
+
+    <script>
+      const chatLog = document.getElementById("chat-log");
+      const userInput = document.getElementById("user-input");
+      const sendBtn = document.getElementById("send-btn");
+      const loading = document.getElementById("loading");
+
+      userInput.addEventListener("input", () => {
+        sendBtn.classList.toggle("active", userInput.value.trim() !== "");
+      });
+
+      userInput.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          sendBtn.click();
+        }
+      });
+
+      sendBtn.addEventListener("click", async () => {
+        const input = userInput.value.trim();
+        if (!input) return;
+
+        appendMessage("user", input);
+        userInput.value = "";
+        sendBtn.classList.remove("active");
+
+        loading.style.display = "block";
+
+        try {
+          const response = await fetch(
+            "https://qkqqshk6e2ozoakobtnzoasb.agents.do-ai.run/api/v1/chat/completions",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer pwUC_5LqXaGrBbyl3ycMbKwcefI5-Hej",
+              },
+              body: JSON.stringify({
+                model: "n/a",
+                messages: [{ role: "user", content: input }],
+                stream: false,
+              }),
+            }
+          );
+
+          const data = await response.json();
+          const botMessage =
+            data.choices?.[0]?.message?.content || "[no response received]";
+          appendMessage("bot", botMessage);
+        } catch (error) {
+          appendMessage("bot", "[error fetching response]");
+        } finally {
+          loading.style.display = "none";
+        }
+      });
+
+      function appendMessage(sender, text) {
+        const wrapper = document.createElement("div");
+        wrapper.className = sender;
+
+        const message = document.createElement("div");
+        message.className = "message";
+        message.innerHTML = text.replace(/\n/g, "<br>");
+
+        wrapper.appendChild(message);
+        chatLog.appendChild(wrapper);
+        chatLog.scrollTop = chatLog.scrollHeight;
+      }
+    </script>
+  </body>
+</html>
